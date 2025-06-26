@@ -1,0 +1,21 @@
+name: Run unit tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Install required tools
+        run: sudo apt update && sudo apt install -y catch2
+
+      - name: Run test suite
+        run: tests/run_unit_tests.sh
