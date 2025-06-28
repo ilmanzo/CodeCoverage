@@ -77,3 +77,4 @@ class TestWrapScript(unittest.TestCase):
             wrap.handle_uninstall(self.binary_path)
 
 if __name__ == "__main__":
+    unittest.main()
