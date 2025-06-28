@@ -14,8 +14,6 @@ class TestWrapScript(unittest.TestCase):
         # Set mandatory environment variable PIN_ROOT
         self.test_dir = tempfile.mkdtemp()
         os.environ["PIN_ROOT"] = self.test_dir
-
-        # Create a temp directory for SAFE_BIN_DIR and LOG_DIR
         self.safe_bin_dir = os.path.join(self.test_dir, "bin")
         self.log_dir = os.path.join(self.test_dir, "data")
         self.pin_tool_dir = os.path.join(self.test_dir, "pin_tool")
@@ -42,7 +40,7 @@ class TestWrapScript(unittest.TestCase):
         shutil.rmtree(self.test_dir)
         if "PIN_ROOT" in os.environ:
             del os.environ["PIN_ROOT"]
-
+            
     def test_find_pin_tool(self):
         found = wrap.find_pin_tool()
         self.assertEqual(found, self.func_tracer_path)

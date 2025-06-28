@@ -56,7 +56,7 @@ Environment variable overrides:
   LOG_DIR            : Directory for Pin output logs (default: /var/coverage/data)
   PIN_TOOL_SEARCH_DIR: Directory to search for FuncTracer.so (default: /var/coverage)
 """)
-
+    
 def handle_install(target_binary, pin_tool):
     if not target_binary:
         error("--install requires a target binary path.")
