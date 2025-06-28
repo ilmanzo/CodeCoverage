@@ -5,6 +5,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 echo "Running Python unit tests..."
 PYTHONPATH="$SCRIPT_DIR/.." python3 "$SCRIPT_DIR/test_coverage_analyzer.py"
+PYTHONPATH="$SCRIPT_DIR/.." python3 "$SCRIPT_DIR/test_wrap.py"
 
 echo "Building and running C++ unit tests..."
 CXXFLAGS=$(pkg-config --cflags catch2 2>/dev/null || echo "")
