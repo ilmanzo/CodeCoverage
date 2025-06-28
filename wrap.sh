@@ -1,5 +1,10 @@
 #!/bin/bash
 
+#
+# note: this script is superseded by the Python script `wrap.py` which is more robust and flexible.
+#
+
+
 # A tool to install and uninstall an Intel Pin wrapper for any given binary.
 #
 # MODES:
