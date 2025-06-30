@@ -4,6 +4,7 @@ import argparse
 import re
 import os
 from collections import defaultdict
+import xml.etree.ElementTree as ET
 
 # --- HTML Template ---
 # Using a template string separates the HTML structure from the Python logic.
@@ -195,6 +196,75 @@ def generate_html_report(image_name, data, output_dir):
     except Exception as e:
         print(f"Error writing HTML file {output_filename}: {e}")
 
+
+def generate_xunit_report(image_name, data, output_dir):
+    """Generates an XUnit XML coverage report for a single image."""
+    sanitized_name = re.sub(r'[^a-zA-Z0-9._-]', '_', os.path.basename(image_name))
+    output_filename = os.path.join(output_dir, f"coverage_{sanitized_name}.xml")
+    
+    total_functions = sorted(list(data['total_functions']))
+    called_functions = data['called_functions']
+    total_count = len(total_functions)
+    skipped_count = total_count - len(called_functions)
+
+    testsuites = ET.Element("testsuites")
+    testsuite = ET.SubElement(
+        testsuites, "testsuite",
+        {
+            "errors": "0",
+            "failures": "0",
+            "name": f"binary_coverage_{str(sanitized_name)}",
+            "skipped": str(skipped_count),
+            "tests": str(total_count),
+        }
+    )
+
+    # Single testcase with all function information
+    testcase = ET.SubElement(
+        testsuite, "testcase",
+        {
+            "classname": f"binary_coverage_{sanitized_name}",
+            "name": "Result",
+        }
+    )
+    
+    called_list = sorted(list(called_functions))
+    uncalled_list = sorted(list(data['total_functions'] - called_functions))
+    
+    # The message which is always visible
+    summary_parts = []
+    summary_parts.append(f"Coverage Summary for {sanitized_name}")
+    summary_parts.append(f"Total Functions: {total_count}")
+    summary_parts.append(f"Called Functions: {len(called_functions)}")
+    summary_parts.append(f"Uncalled Functions: {skipped_count}")
+    summary_parts.append(f"Coverage: {(len(called_functions) / total_count * 100):.2f}%" if total_count > 0 else "Coverage: 0.00%")
+    summary_message = " | ".join(summary_parts)
+    
+    # The detailed lists of functions
+    function_details = []
+    
+    if called_list:
+        function_details.append("CALLED FUNCTIONS:")
+        for func in called_list:
+            function_details.append(f"  ✓ {func}")
+        function_details.append("")
+    
+    if uncalled_list:
+        function_details.append("UNCALLED FUNCTIONS:")
+        for func in uncalled_list:
+            function_details.append(f"  ✗ {func}")
+    
+    passed_element = ET.SubElement(testcase, "passed")
+    passed_element.set("message", summary_message)
+    passed_element.text = "\n".join(function_details)
+
+    tree = ET.ElementTree(testsuites)
+    try:
+        tree.write(output_filename, encoding="utf-8", xml_declaration=True)
+        print(f"    - XUnit report saved to {output_filename}")
+    except Exception as e:
+            print(f"Error writing XUnit file {output_filename}: {e}")
+
 def main():
     """Main function to parse arguments and run the analysis."""
     parser = argparse.ArgumentParser(
@@ -212,6 +282,12 @@ def main():
         type=str,
         help='Directory to save per-image HTML coverage reports.'
     )
+    parser.add_argument(
+        '--xunit-output',
+        metavar='<directory>',
+        type=str,
+        help='Directory to save per-image XUnit XML coverage reports.'
+    )
     args = parser.parse_args()
 
     coverage_data = analyze_logs(args.log_files)
@@ -227,6 +303,17 @@ def main():
             print("--> HTML generation complete.")
         except OSError as e:
             print(f"Error: Could not create HTML output directory '{output_dir}': {e}")
+
+    if args.xunit_output:
+        output_dir = args.xunit_output
+        try:
+            os.makedirs(output_dir, exist_ok=True)
+            print(f"\n--> Generating XUnit reports in '{output_dir}'...")
+            for image, data in sorted(coverage_data.items()):
+                generate_xunit_report(image, data, output_dir)
+            print("--> XUnit generation complete.")
+        except OSError as e:
+            print(f"Error: Could not create XUnit output directory '{output_dir}': {e}")
 
 if __name__ == '__main__':
     main()
