@@ -41,7 +41,7 @@ bool func_is_relevant(const std::string_view &func_name)
         return false;
 
     // Ignore PLT functions and internal functions (usually prefixed with __)
-    if (func_name.starts_with("@plt") || func_name.starts_with("__"))
+    if (func_name.ends_with("@plt") || func_name.starts_with("__"))
         return false;
 
     return true;
