@@ -72,6 +72,6 @@ gcc -g -gdwarf-4 main.c
 # Run unit tests
 
 ```
-cd tests
-./run_unit_tests.sh
+./tests/run_unit_tests.sh
 ```
+
