@@ -1,9 +1,10 @@
 #define CATCH_CONFIG_MAIN
+#define COVERAGE_TESTING_BUILD
 #include "catch2/catch.hpp"
 #include <string>
 #include <set>
 #include <mutex>
-#include "FuncTracer.hpp"
+#include "../FuncTracer.hpp"
 
 // Deduplication logic for testing
 static std::set<std::string> logged_functions;

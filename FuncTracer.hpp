@@ -1,5 +1,10 @@
 /* FuncTracer.cpp */
+
+// We do not want to include PIN in testing build
+#ifndef COVERAGE_TESTING_BUILD
 #include "pin.H"
+#endif
+
 #include <iostream>
 #include <fstream>
 #include <string>
