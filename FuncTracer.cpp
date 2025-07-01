@@ -1,11 +1,5 @@
 /* FuncTracer.cpp */
-#include "pin.H"
-#include <iostream>
-#include <fstream>
-#include <string>
-#include <set>
-#include <mutex>
-#include <unistd.h> // For getpid()
+#include "FuncTracer.hpp"
 
 // Global set and mutex to track logged functions
 static std::set<std::string> logged_functions;
