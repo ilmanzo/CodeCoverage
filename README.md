@@ -8,6 +8,7 @@ This repository is a code coverage tool that utilizes [Pin](https://www.intel.co
 # Prerequisites:
 - an x86_64 processor (doesn't work on other arch)
 - make
+- go language compiler
 - g++ 14 (15 doesn't work yet with Intel Pin)
 - Catch2 library if you want to run the c++ testsuite : `zypper install Catch2-2-devel` 
 

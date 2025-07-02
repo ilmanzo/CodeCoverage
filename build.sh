@@ -45,6 +45,19 @@ export CXX="$CXX -std=c++20"
 make
 echo "export PIN_ROOT=\"$PIN_ROOT\"" > env
 
+# Build Go program in cmd folder
+if command -v go &>/dev/null; then
+    echo "Building Go CLI in ./cmd..."
+    pushd cmd > /dev/null
+    go build -o ../funkoverage .
+    popd > /dev/null
+    echo "Go CLI built as ./funkoverage"
+else
+    echo "Warning: Go not found, skipping Go CLI build."
+fi
+
+
+
 # Optional: Build and run the example
 # First you have to set PIN_ENV generated in `env`
 #
