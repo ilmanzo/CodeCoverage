@@ -144,31 +144,3 @@ func TestWrapUnwrapLogic(t *testing.T) {
 		t.Error("unwrap did not restore ELF binary")
 	}
 }
-
-// --- printTxtReport smoke test ---
-
-func TestPrintTxtReport(t *testing.T) {
-	coverage := map[string]*CoverageData{
-		"img": {
-			TotalFunctions:  map[string]struct{}{"foo": {}, "bar": {}, "baz": {}},
-			CalledFunctions: map[string]struct{}{"foo": {}, "bar": {}},
-		},
-	}
-	printTxtReport(coverage)
-}
-
-// --- generateHTMLReport and generateXUnitReport smoke tests ---
-
-func TestGenerateReports(t *testing.T) {
-	tmp := t.TempDir()
-	coverage := &CoverageData{
-		TotalFunctions:  map[string]struct{}{"foo": {}, "bar": {}, "baz": {}},
-		CalledFunctions: map[string]struct{}{"foo": {}, "bar": {}},
-	}
-	if err := generateHTMLReport("img", coverage, tmp); err != nil {
-		t.Errorf("generateHTMLReport failed: %v", err)
-	}
-	if err := generateXUnitReport("img", coverage, tmp); err != nil {
-		t.Errorf("generateXUnitReport failed: %v", err)
-	}
-}

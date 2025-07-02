@@ -447,8 +447,7 @@ func printHelp() {
       Show this help message.
 
   version
-      Show program version.
-`)
+      Show program version.`)
 }
 
 func printVersion() {
