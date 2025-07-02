@@ -432,10 +432,23 @@ func generateXUnitReport(image string, data *CoverageData, outputDir string) err
 func printHelp() {
 	fmt.Println(`Usage:
   wrap /path/to/binary
+      Wrap the given ELF binary with the Pin coverage wrapper.
+
   unwrap /path/to/binary
-  report [html,xml,txt] --logs log1,log2,... [--outdir dir]
+      Restore the original binary previously wrapped.
+
+  report <logdir> [html,xml,txt] [--outdir DIR]
+      Generate coverage reports from log files.
+      <logdir>           Directory containing .log files (all will be used)
+      html/xml/txt       One or more output formats (at least one required)
+      --outdir DIR       Output directory for reports (default: current directory)
+
   help
-  version`)
+      Show this help message.
+
+  version
+      Show program version.
+`)
 }
 
 func printVersion() {
