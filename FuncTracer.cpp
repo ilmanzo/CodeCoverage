@@ -3,7 +3,7 @@
 #include <iostream>
 #include <fstream>
 #include <unistd.h> // For getpid()
-#include "Functracer.hpp"
+#include "FuncTracer.hpp"
 
 // Global set and mutex to track logged functions
 static std::set<std::string> logged_functions;
