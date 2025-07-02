@@ -49,9 +49,9 @@ echo "export PIN_ROOT=\"$PIN_ROOT\"" > env
 if command -v go &>/dev/null; then
     echo "Building Go CLI in ./cmd..."
     pushd cmd > /dev/null
-    go build -o ../binarycoverage .
+    go build -o ../funkoverage .
     popd > /dev/null
-    echo "Go CLI built as ./binarycoverage"
+    echo "Go CLI built as ./funkoverage"
 else
     echo "Warning: Go not found, skipping Go CLI build."
 fi
