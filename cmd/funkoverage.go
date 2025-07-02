@@ -478,28 +478,26 @@ func main() {
 			os.Exit(1)
 		}
 		logsArg := os.Args[2]
-		formats := []string{}
-		outdir := "."
-		// Parse remaining args for formats and --outdir
-		for i := 3; i < len(os.Args); i++ {
-			arg := os.Args[i]
-			switch arg {
-			case "html", "xml", "txt":
-				formats = append(formats, arg)
-			default:
-				if strings.HasPrefix(arg, "--outdir=") {
-					outdir = strings.TrimPrefix(arg, "--outdir=")
-				} else if arg == "--outdir" && i+1 < len(os.Args) {
-					outdir = os.Args[i+1]
-					i++
+		logFiles := []string{}
+		info, err := os.Stat(logsArg)
+		if err == nil && info.IsDir() {
+			entries, err := os.ReadDir(logsArg)
+			if err != nil {
+				fmt.Printf("report: failed to read directory %s: %v\n", logsArg, err)
+				os.Exit(1)
+			}
+			for _, entry := range entries {
+				if !entry.IsDir() && strings.HasSuffix(entry.Name(), ".log") {
+					logFiles = append(logFiles, filepath.Join(logsArg, entry.Name()))
 				}
 			}
+			if len(logFiles) == 0 {
+				fmt.Printf("report: no .log files found in directory %s\n", logsArg)
+				os.Exit(1)
+			}
+		} else {
+			logFiles = strings.Split(logsArg, ",")
 		}
-		if len(formats) == 0 {
-			fmt.Println("report: must specify at least one of html, xml, txt")
-			os.Exit(1)
-		}
-		logFiles := strings.Split(logsArg, ",")
 		coverage, err := analyzeLogs(logFiles)
 		if err != nil {
 			fmt.Println("report error:", err)
