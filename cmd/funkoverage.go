@@ -494,19 +494,19 @@ func main() {
 		formats := []string{}
 		outdir := "."
 
-		// Parse remaining args for formats and --outdir
-		for i := 3; i < len(os.Args); i++ {
+		if len(os.Args) < 4 {
+			fmt.Println("report: must specify formats as a comma-separated list (e.g. txt,html)")
+			os.Exit(1)
+		}
+		formats = strings.Split(os.Args[3], ",")
+		// Parse remaining args for --outdir
+		for i := 4; i < len(os.Args); i++ {
 			arg := os.Args[i]
-			switch arg {
-			case "html", "xml", "txt":
-				formats = append(formats, arg)
-			default:
-				if strings.HasPrefix(arg, "--outdir=") {
-					outdir = strings.TrimPrefix(arg, "--outdir=")
-				} else if arg == "--outdir" && i+1 < len(os.Args) {
-					outdir = os.Args[i+1]
-					i++
-				}
+			if strings.HasPrefix(arg, "--outdir=") {
+				outdir = strings.TrimPrefix(arg, "--outdir=")
+			} else if arg == "--outdir" && i+1 < len(os.Args) {
+				outdir = os.Args[i+1]
+				i++
 			}
 		}
 		if len(formats) == 0 {
