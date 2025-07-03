@@ -176,7 +176,7 @@ func wrap(targetBinary string) error {
 	if err := os.MkdirAll(SAFE_BIN_DIR, 0755); err != nil {
 		return err
 	}
-	tmpDir, err := os.MkdirTemp(SAFE_BIN_DIR, "origbin-")
+	tmpDir, err := os.MkdirTemp(SAFE_BIN_DIR, "*")
 	if err != nil {
 		return err
 	}
