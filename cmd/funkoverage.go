@@ -231,7 +231,7 @@ func unwrap(targetBinary string) error {
 	if _, err := os.Stat(origPath); err != nil {
 		return fmt.Errorf("original binary not found: %w", err)
 	}
-	if err := os.Rename(origPath, targetBinary); err != nil {
+	if err := move(origPath, targetBinary); err != nil {
 		return fmt.Errorf("could not restore original binary: %w", err)
 	}
 	_ = os.Remove(filepath.Dir(origPath))
