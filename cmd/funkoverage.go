@@ -97,6 +97,45 @@ func isELF(path string) bool {
 	return string(magic) == "\x7fELF"
 }
 
+// move attempts to rename a file, falling back to copying if it fails due to cross-device link issues.
+func move(source, destination string) error {
+	err := os.Rename(source, destination)
+	if err != nil && strings.Contains(err.Error(), "invalid cross-device link") {
+		return moveCrossDevice(source, destination)
+	}
+	return err
+}
+
+func moveCrossDevice(source, destination string) error {
+	src, err := os.Open(source)
+	if err != nil {
+		return fmt.Errorf("open(source): %w", err)
+	}
+	dst, err := os.Create(destination)
+	if err != nil {
+		src.Close()
+		return fmt.Errorf("create(destination): %w", err)
+	}
+	_, err = io.Copy(dst, src)
+	src.Close()
+	dst.Close()
+	if err != nil {
+		return fmt.Errorf("copy: %w", err)
+	}
+	fi, err := os.Stat(source)
+	if err != nil {
+		os.Remove(destination)
+		return fmt.Errorf("stat: %w", err)
+	}
+	err = os.Chmod(destination, fi.Mode())
+	if err != nil {
+		os.Remove(destination)
+		return fmt.Errorf("chmod: %w", err)
+	}
+	os.Remove(source)
+	return nil
+}
+
 func wrap(targetBinary string) error {
 	PIN_ROOT := os.Getenv("PIN_ROOT")
 	if PIN_ROOT == "" {
@@ -132,7 +171,7 @@ func wrap(targetBinary string) error {
 	}
 	// --- ELF check here ---
 	if !isELF(targetBinary) {
-		return fmt.Errorf("'%s' is not an ELF executable (maybe a script?). Aborting.", targetBinary)
+		return fmt.Errorf("'%s' is not an ELF executable (maybe a script?). Aborting", targetBinary)
 	}
 	if err := os.MkdirAll(SAFE_BIN_DIR, 0755); err != nil {
 		return err
@@ -143,7 +182,7 @@ func wrap(targetBinary string) error {
 	}
 	binaryName := filepath.Base(targetBinary)
 	movedBinaryPath := filepath.Join(tmpDir, binaryName)
-	if err := os.Rename(targetBinary, movedBinaryPath); err != nil {
+	if err := move(targetBinary, movedBinaryPath); err != nil {
 		return err
 	}
 	wrapperScript := fmt.Sprintf(`#!/bin/bash
